@@ -24,5 +24,6 @@ There are different ways of going about using `thread-art-rust`:
 - Using `git clone` and compiling it in the `Dockerfile`.
 - Having compiled it before and downloading it with `ADD`.
 
-I am leaning towards the first option.
+I am leaning towards the first option. After some research it can be done with
+[multi-stage builds in docker](https://docs.docker.com/build/building/multi-stage/).
 
