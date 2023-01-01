@@ -8,7 +8,7 @@ function RandomID() {
   const r = crypto.getRandomValues(new Uint8Array(12));
   const b = [];
   for (let i = 0; i < 12; i++) {
-    const c = parseInt(r[i]);
+    const c = r[i];
     b.push(letters[c % clen]);
   }
   return b.join("");
@@ -19,7 +19,7 @@ const QUEUE_LIMIT = 10;
 
 serve(handler, { port: 8001 });
 
-async function handler(req: Request): Response {
+async function handler(req: Request): Promise<Response> {
   const d = Deno.readDir("./queue");
   let sum = 0;
   for await (const _ of d) {
@@ -30,7 +30,11 @@ async function handler(req: Request): Response {
   }
   try {
     const f = await req.formData();
-    const image = await f.get("image").arrayBuffer();
+    const imageEntry = f.get("image");
+    if (imageEntry == null || typeof imageEntry != "object") {
+      throw new Error("Image not contained in form data.");
+    }
+    const image: Uint8Array = new Uint8Array(await imageEntry.arrayBuffer());
     const filename = RandomID();
     await Deno.mkdir(`./saves/${filename}`);
     await Deno.writeFile(`./saves/${filename}/INPUT.png`, image, {
@@ -52,14 +56,15 @@ async function handler(req: Request): Response {
     
     const p = Deno.run({ cmd: cmd });
     await p.status();
-    await Deno.writeTextFile(join(QUEUE_PATH, filename));
+    await Deno.writeTextFile(join(QUEUE_PATH, filename), "");
     p.close();
     
     return new Response(`Success! Your ID is ${filename}`, { status: 200 });
     
   } catch (error) {
+    console.log(error);
     return new Response(
-      "Something went wrong! Please wait before trying again.",
+      "Something went wrong! Please wait before trying again. " + error.message,
       { status: 500 },
     );
   }
