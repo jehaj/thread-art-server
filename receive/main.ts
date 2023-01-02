@@ -1,5 +1,6 @@
-import { join } from "https://deno.land/std@0.170.0/path/posix.ts";
+import { join } from "https://deno.land/std@0.170.0/path/mod.ts";
 import { serve } from "https://deno.land/std@0.170.0/http/server.ts";
+import "https://deno.land/std@0.170.0/dotenv/load.ts";
 
 function RandomID() {
   const letters =
@@ -14,18 +15,24 @@ function RandomID() {
   return b.join("");
 }
 
-const QUEUE_PATH = "./queue";
 const QUEUE_LIMIT = 10;
+const SAVE_PATH = Deno.env.get("SAVE_PATH") || "./saves";
+const QUEUE_PATH = Deno.env.get("QUEUE_PATH") || "./queue";
+const PORT = parseInt(Deno.env.get("PORT") || "8001")
 
-serve(handler, { port: 8001 });
+serve(handler, { port: PORT });
 
 async function handler(req: Request): Promise<Response> {
+  const filename = RandomID();
+  await Deno.writeTextFile(join(QUEUE_PATH, filename), "");
+
   const d = Deno.readDir("./queue");
   let sum = 0;
   for await (const _ of d) {
     sum += 1;
   }
-  if (sum >= QUEUE_LIMIT) {
+  if (sum > QUEUE_LIMIT) {
+    await Deno.remove(join(QUEUE_PATH, filename));
     return new Response("Try again later!", { status: 500 });
   }
   try {
@@ -34,10 +41,9 @@ async function handler(req: Request): Promise<Response> {
     if (imageEntry == null || typeof imageEntry != "object") {
       throw new Error("Image not contained in form data.");
     }
-    const image: Uint8Array = new Uint8Array(await imageEntry.arrayBuffer());
-    const filename = RandomID();
-    await Deno.mkdir(`./saves/${filename}`);
-    await Deno.writeFile(`./saves/${filename}/INPUT.png`, image, {
+    const image = new Uint8Array(await imageEntry.arrayBuffer());
+    await Deno.mkdir(join(SAVE_PATH, filename), { recursive: true });
+    await Deno.writeFile(join(SAVE_PATH, filename, "INPUT.png"), image, {
       createNew: true,
     });
     const cmd = [
@@ -53,16 +59,14 @@ async function handler(req: Request): Promise<Response> {
       "Gray",
       `./saves/${filename}/OUTPUT.png`,
     ];
-    
+
     const p = Deno.run({ cmd: cmd });
     await p.status();
-    await Deno.writeTextFile(join(QUEUE_PATH, filename), "");
     p.close();
-    
+
     return new Response(`Success! Your ID is ${filename}`, { status: 200 });
-    
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return new Response(
       "Something went wrong! Please wait before trying again. " + error.message,
       { status: 500 },
