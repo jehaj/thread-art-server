@@ -15,16 +15,19 @@ function RandomID() {
   return b.join("");
 }
 
-const QUEUE_LIMIT = 10;
+const QUEUE_LIMIT = parseInt(Deno.env.get("QUEUE_LIMIT") || "10");
 const SAVE_PATH = Deno.env.get("SAVE_PATH") || "./saves";
 const QUEUE_PATH = Deno.env.get("QUEUE_PATH") || "./queue";
 const PORT = parseInt(Deno.env.get("PORT") || "8001")
+
+await Deno.mkdir(SAVE_PATH, { recursive: true });
+await Deno.mkdir(QUEUE_PATH, { recursive: true });
 
 serve(handler, { port: PORT });
 
 async function handler(req: Request): Promise<Response> {
   const filename = RandomID();
-  await Deno.writeTextFile(join(QUEUE_PATH, filename), "");
+  await Deno.writeTextFile(join(QUEUE_PATH, filename), "",);
 
   const d = Deno.readDir("./queue");
   let sum = 0;
@@ -64,9 +67,16 @@ async function handler(req: Request): Promise<Response> {
     await p.status();
     p.close();
 
+    await Deno.writeTextFile(join(QUEUE_PATH, filename), "OK",);
     return new Response(`Success! Your ID is ${filename}`, { status: 200 });
   } catch (error) {
     console.error(error);
+    try {
+      await Deno.remove(join(QUEUE_PATH, filename));
+    } catch (_error) {
+      // nothing is done
+    }
+
     return new Response(
       "Something went wrong! Please wait before trying again. " + error.message,
       { status: 500 },
