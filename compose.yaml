@@ -1,0 +1,7 @@
+services:
+  receive:
+    build: "receive/"
+    ports:
+     - "8001:8001"
+    volumes:
+    - thread-art-vol:/app
