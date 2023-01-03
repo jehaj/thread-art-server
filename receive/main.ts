@@ -20,6 +20,13 @@ const SAVE_PATH = Deno.env.get("SAVE_PATH") || "./saves";
 const QUEUE_PATH = Deno.env.get("QUEUE_PATH") || "./queue";
 const PORT = parseInt(Deno.env.get("PORT") || "8001")
 
+console.log("Running with settings:");
+console.log("QUEUE_LIMIT =", QUEUE_LIMIT);
+console.log("SAVE_PATH =", SAVE_PATH);
+console.log("QUEUE_PATH =", QUEUE_PATH);
+console.log("PORT =", PORT);
+console.log("Working at:", Deno.cwd());
+
 await Deno.mkdir(SAVE_PATH, { recursive: true });
 await Deno.mkdir(QUEUE_PATH, { recursive: true });
 
@@ -29,7 +36,7 @@ async function handler(req: Request): Promise<Response> {
   const filename = RandomID();
   await Deno.writeTextFile(join(QUEUE_PATH, filename), "",);
 
-  const d = Deno.readDir("./queue");
+  const d = Deno.readDir(QUEUE_PATH);
   let sum = 0;
   for await (const _ of d) {
     sum += 1;
@@ -51,7 +58,7 @@ async function handler(req: Request): Promise<Response> {
     });
     const cmd = [
       "convert",
-      `./saves/${filename}/INPUT.png`,
+      join(SAVE_PATH, filename, "INPUT.png"),
       "-resize",
       "400x400^",
       "-gravity",
@@ -60,7 +67,7 @@ async function handler(req: Request): Promise<Response> {
       "400x400",
       "-colorspace",
       "Gray",
-      `./saves/${filename}/OUTPUT.png`,
+      join(SAVE_PATH, filename, "OUTPUT.png"),
     ];
 
     const p = Deno.run({ cmd: cmd });
