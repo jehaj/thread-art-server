@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: thread-art-server
+spec:
+  containers:
+  - name: thread-art-receive
+    image: receive
+    ports:
+      - containerPort: 8001
+    volumeMounts:
+      - mountPath: /app
+        name: thread-art-vol
+  volumes:
+    - name: thread-art-vol
+      emptyDir:
+        {}
