@@ -27,3 +27,21 @@ There are different ways of going about using `thread-art-rust`:
 I am leaning towards the first option. After some research it can be done with
 [multi-stage builds in docker](https://docs.docker.com/build/building/multi-stage/).
 
+## Commands
+```
+$ deno run --allow-net --allow-write --allow-read --allow-env --allow-run main.ts
+```
+
+```
+$ podman-compose up
+```
+
+```
+$ docker build -t receive . && docker run -p 8001:8001 app
+```
+
+```
+$ podman kube play kube.yaml
+$ docker build -t receive .
+$ podman kube play --replace kube.yaml
+```
