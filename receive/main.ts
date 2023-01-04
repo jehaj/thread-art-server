@@ -34,7 +34,7 @@ serve(handler, { port: PORT });
 
 async function handler(req: Request): Promise<Response> {
   const filename = RandomID();
-  await Deno.writeTextFile(join(QUEUE_PATH, filename), "",);
+  (await Deno.create(join(QUEUE_PATH, filename))).close();
 
   const d = Deno.readDir(QUEUE_PATH);
   let sum = 0;
