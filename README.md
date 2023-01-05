@@ -37,7 +37,7 @@ $ podman-compose up
 ```
 
 ```
-$ docker build -t receive . && docker run -p 8001:8001 app
+$ docker build -t receive . && docker run -p 8001:8001 receive
 ```
 
 ```
