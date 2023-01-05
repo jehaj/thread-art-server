@@ -2,6 +2,10 @@ services:
   receive:
     build: "receive/"
     ports:
-     - "8001:8001"
+      - "8001:8001"
     volumes:
-    - thread-art-vol:/app
+      - thread-art-vol:/app/thread-art-vol
+  act:
+    build: "act/"
+    volumes:
+      - thread-art-vol:/app/thread-art-vol

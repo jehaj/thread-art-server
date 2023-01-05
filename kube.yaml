@@ -4,14 +4,18 @@ metadata:
   name: thread-art-server
 spec:
   containers:
-  - name: thread-art-receive
-    image: receive
-    ports:
-      - containerPort: 8001
-    volumeMounts:
-      - mountPath: /app
-        name: thread-art-vol
+    - name: thread-art-receive
+      image: receive
+      ports:
+        - containerPort: 8001
+      volumeMounts:
+        - mountPath: /app/thread-art-vol
+          name: thread-art-vol
+    - name: thread-art-act
+      image: act
+      volumeMounts:
+        - mountPath: /app/thread-art-vol
+          name: thread-art-vol
   volumes:
     - name: thread-art-vol
-      emptyDir:
-        {}
+      emptyDir: {}
