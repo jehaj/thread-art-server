@@ -4,11 +4,12 @@ import PQueue from "https://deno.land/x/p_queue@1.0.1/mod.ts";
 
 const SAVE_PATH = Deno.env.get("SAVE_PATH") || "../receive/saves";
 const QUEUE_PATH = Deno.env.get("QUEUE_PATH") || "../receive/queue";
+const EXECUTABLE_PATH = Deno.env.get("EXECUTABLE_PATH") || "./thread-art-rust";
 
 async function workOnID(id: string): Promise<void> {
   const inputPath = join(SAVE_PATH, id, "OUTPUT.png");
   const outputPath = join(SAVE_PATH, id, "RESULT.png");
-  const cmd = ["./thread-art-rust", inputPath, outputPath];
+  const cmd = [EXECUTABLE_PATH, inputPath, outputPath];
   const p = Deno.run({ cmd: cmd });
   await p.status();
   console.log("Done with", id + ".");
