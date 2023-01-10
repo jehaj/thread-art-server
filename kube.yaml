@@ -18,4 +18,5 @@ spec:
           name: thread-art-vol
   volumes:
     - name: thread-art-vol
-      emptyDir: {}
+      persistentVolumeClaim:
+        claimName: thread-art-volume
