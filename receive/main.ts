@@ -1,6 +1,6 @@
-import { join } from "https://deno.land/std@0.170.0/path/mod.ts";
-import { serve } from "https://deno.land/std@0.170.0/http/server.ts";
-import "https://deno.land/std@0.170.0/dotenv/load.ts";
+import { join, serve, loadSync } from "./deps.ts";
+
+loadSync();
 
 function RandomID() {
   const letters =

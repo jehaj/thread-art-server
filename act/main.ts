@@ -1,6 +1,4 @@
-import { normalize, basename } from "https://deno.land/std@0.170.0/path/mod.ts";
-import { join } from "https://deno.land/std@0.170.0/path/mod.ts";
-import PQueue from "https://deno.land/x/p_queue@1.0.1/mod.ts";
+import { normalize, basename, join, PQueue } from "./deps.ts";
 
 const SAVE_PATH = Deno.env.get("SAVE_PATH") || "../receive/saves";
 const QUEUE_PATH = Deno.env.get("QUEUE_PATH") || "../receive/queue";
