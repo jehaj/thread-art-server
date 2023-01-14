@@ -33,6 +33,8 @@ await Deno.mkdir(QUEUE_PATH, { recursive: true });
 serve(handler, { port: PORT });
 
 async function handler(req: Request): Promise<Response> {
+  const myHeaders = new Headers();
+  myHeaders.append("Access-Control-Allow-Origin", "*");
   if (req.method == "GET") {
     try {
       const id = req.url.substring(req.url.lastIndexOf('/') + 1);
@@ -41,9 +43,9 @@ async function handler(req: Request): Promise<Response> {
       const data = new FormData();
       data.append("image", new Blob([imageFile], { type: "image/png" }));
       data.append("text", f);
-      return new Response(data, { status: 200 });
+      return new Response(data, { status: 200, headers: myHeaders });
     } catch (_) {
-      return new Response("The image at entered ID (if it exists) is not done yet.", { status: 400 });
+      return new Response("The image at entered ID (if it exists) is not done yet.", { status: 400, headers: myHeaders });
     }
   } else if (req.method == "POST") {
     const filename = RandomID();
@@ -88,7 +90,7 @@ async function handler(req: Request): Promise<Response> {
       p.close();
 
       await Deno.writeTextFile(join(QUEUE_PATH, filename), "OK");
-      return new Response(`Success! Your ID is ${filename}`, { status: 200 });
+      return new Response(`Success! Your ID is ${filename}`, { status: 200, headers: myHeaders });
     } catch (error) {
       console.error(error);
       try {
@@ -100,7 +102,7 @@ async function handler(req: Request): Promise<Response> {
       return new Response(
         "Something went wrong! Please wait before trying again. " +
           error.message,
-        { status: 500 },
+        { status: 500, headers: myHeaders },
       );
     }
   } else {

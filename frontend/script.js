@@ -99,3 +99,24 @@ function draw() {
     window.requestAnimationFrame(draw);
   }
 }
+
+const imageFile = document.getElementById("image-file");
+const uploadButton = document.getElementById("upload");
+
+uploadButton.addEventListener("click", upload);
+
+function upload() {
+  let uploadData = new FormData();
+  uploadData.append("image", new Blob([imageFile.files[0]]));
+  fetch("http://localhost:8001", {
+    method: "POST",
+    body: uploadData
+  }).then((res) => {
+    if(res.status == 200) {
+      res.text().then((result) => {
+        const id = result.split(" ")[4];
+        window.location.assign(`art.html?id=${id}`);   
+      })
+    }
+  });
+}
