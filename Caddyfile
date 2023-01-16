@@ -1,0 +1,9 @@
+:80
+
+handle_path /api/* {
+    reverse_proxy {
+        to receive:8001
+    }
+}
+
+file_server

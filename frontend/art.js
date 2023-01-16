@@ -6,8 +6,10 @@ idHolder.innerText = id;
 
 let timeout = 1000;
 
+const apiURL = window.location.origin + "/api";
+
 function getImage() {
-    fetch(`http://localhost:8001/${id}`).then((res) => {
+    fetch(`${apiURL}/${id}`).then((res) => {
         const successHolder = document.getElementById("success-holder");
         successHolder.removeAttribute("hidden");
         console.log(res);

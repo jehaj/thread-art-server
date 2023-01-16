@@ -102,14 +102,17 @@ function draw() {
 
 const imageFile = document.getElementById("image-file");
 const uploadButton = document.getElementById("upload");
+const apiURL = window.location.origin + "/api/";
 
 uploadButton.addEventListener("click", upload);
 
-function upload() {
+function upload(event) {
+  event.preventDefault();
   let uploadData = new FormData();
   uploadData.append("image", new Blob([imageFile.files[0]]));
-  fetch("http://localhost:8001", {
+  fetch(apiURL, {
     method: "POST",
+    mode: "same-origin",
     body: uploadData
   }).then((res) => {
     if(res.status == 200) {
