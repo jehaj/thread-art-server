@@ -12,6 +12,25 @@ done and can be found there - including the algorithm in different languages.
 To make it easier and more friendly to use, a simple frontend for the 
 application has been made.
 
+It is simple to run. I am using `podman`, but you should be able to use
+`docker` instead. Clone the repo with
+```
+$ git clone https://github.com/NikolajK-HTX/thread-art-server.git
+```
+Change into the directory. Use `podman-compose` or `docker compose` to
+spin up the containers
+```
+$ podman-compose up -d
+```
+You can now visit the page at `http://localhost:1025/`. When you're ready to
+deploy it, change the ports in `compose.yaml` and the first line in the 
+Caddyfile from :80 to the domain and https will be automatically be enabled
+after running
+```
+podman exec -w /etc/caddy <container-name / ID> caddy reload
+```
+You should then be able to visit the site at `https://<domain>/`.
+
 ## Specifics
 ImageMagick is used to convert a user uploaded image into the format that the
 software accepts (the output needs to be PNG). The default case is 400x400 grayscale:
