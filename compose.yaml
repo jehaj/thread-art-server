@@ -1,16 +1,19 @@
 services:
   receive:
     build: "receive/"
+    restart: unless-stopped
     #ports:
     #  - "8001:8001"
     volumes:
       - thread-art-vol:/app/thread-art-vol
   act:
     build: "act/"
+    restart: unless-stopped
     volumes:
       - thread-art-vol:/app/thread-art-vol
   server:
     image: caddy:2.6
+    restart: unless-stopped
     ports:
       - "1025:80"
       #- "80:80"
