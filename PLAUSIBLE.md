@@ -62,7 +62,6 @@ volumes:
   geoip:
     driver: local
 ```
-
 The modification consists of changing :ro (read-only) to :Z. It has something to do with SELinux, which fedora uses. Not making this change will result in permissions denied errors. More information may be found at [blog.christophersmart.com](https://blog.christophersmart.com/2021/01/31/podman-volumes-and-selinux/). `caddy` has been added as an reverse_proxy to enable SSL down the road.
 
 The `Caddyfile` should look like
@@ -73,16 +72,20 @@ reverse_proxy {
   to plausible:8000
 }
 ```
-
 I believe the Caddyfile could also look like
 ```
 stats.domain.com {
-  reverse_proxy {
-    to plausible:8000
-  }
+  reverse_proxy plausible:8000
 }
 ```
-
 If `plausible` exists in another `.yaml` than `caddy`, then they need to be on the same network. Consult [baeldung.com](https://www.baeldung.com/ops/docker-compose-communication) for more information.
+
+A bit of testing seems to resolve above problem with
+```
+networks:
+  default:
+    name: <network-name>
+```
+added to both `.yaml` files.
 
 Good luck!
