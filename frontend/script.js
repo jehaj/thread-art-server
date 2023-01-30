@@ -94,6 +94,10 @@ function draw() {
     doLoop = false;
   }
 
+  if(runButton.value == "Run") {
+    ctx.clearRect(0, 0, 400, 400); // clear canvas
+  }
+
   if (doLoop) {
     window.requestAnimationFrame(draw);
   }
@@ -107,6 +111,10 @@ uploadButton.addEventListener("click", upload);
 
 function upload(event) {
   event.preventDefault();
+  uploadButton.toggleAttribute("disabled");
+  const infoText = document.getElementById("info-text");
+  infoText.removeAttribute("hidden");
+  infoText.innerText = "Uploading the image. Please wait!";
   let uploadData = new FormData();
   uploadData.append("image", new Blob([imageFile.files[0]]));
   fetch(apiURL, {
@@ -119,6 +127,11 @@ function upload(event) {
         const id = result.split(" ")[4];
         window.location.assign(`art.html?id=${id}`);
       })
+    } else {
+      uploadButton.toggleAttribute("disabled");
+      res.text().then(s => {
+        infoText.innerText = s;
+      });
     }
   });
 }
