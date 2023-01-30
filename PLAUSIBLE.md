@@ -1,5 +1,7 @@
 I have been trying to setup [plausible.io](https://plausible.io/) for self-host with podman - quite unsuccessfully. Until now. It took more than 4 hours, so this is for future reference. Do not waste more time :-)
 
+# Setup
+
 The `docker-compose.yaml` should look like
 ```
 version: "3.3"
@@ -87,5 +89,14 @@ networks:
     name: <network-name>
 ```
 added to both `.yaml` files.
+
+# Updating
+While being in the plausible git directory with the `docker-compose.yaml` run
+```
+$ podman-compose down --remove-orphans
+$ podman-compose pull plausible
+$ podman-compose up -d
+```
+Now you're running an updated version of plausible!
 
 Good luck!
