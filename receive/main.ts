@@ -37,7 +37,7 @@ async function handler(req: Request): Promise<Response> {
   myHeaders.append("Access-Control-Allow-Origin", "*");
   if (req.method == "GET") {
     try {
-      const id = req.url.substring(req.url.lastIndexOf('/') + 1);
+      const id = req.url.substring(req.url.lastIndexOf("/") + 1);
       const f = await Deno.readTextFile(join(SAVE_PATH, id, "RESULT.txt"));
       const imageFile = await Deno.readFile(join(SAVE_PATH, id, "RESULT.png"));
       const data = new FormData();
@@ -45,7 +45,10 @@ async function handler(req: Request): Promise<Response> {
       data.append("text", f);
       return new Response(data, { status: 200, headers: myHeaders });
     } catch (_) {
-      return new Response("The image at entered ID (if it exists) is not done yet.", { status: 400, headers: myHeaders });
+      return new Response(
+        "The image at entered ID (if it exists) is not done yet.",
+        { status: 400, headers: myHeaders },
+      );
     }
   } else if (req.method == "POST") {
     const filename = RandomID();
@@ -58,7 +61,7 @@ async function handler(req: Request): Promise<Response> {
     }
     if (sum > QUEUE_LIMIT) {
       await Deno.remove(join(QUEUE_PATH, filename));
-      return new Response("Try again later!", { status: 500 });
+      return new Response("Try again later! Queue is full.", { status: 500 });
     }
     try {
       const f = await req.formData();
@@ -86,11 +89,16 @@ async function handler(req: Request): Promise<Response> {
       ];
 
       const p = Deno.run({ cmd: cmd });
-      await p.status();
+      if ((await p.status()).code != 0) {
+        throw Error("Bad image uploaded! Try another.");
+      }
       p.close();
 
       await Deno.writeTextFile(join(QUEUE_PATH, filename), "OK");
-      return new Response(`Success! Your ID is ${filename}`, { status: 200, headers: myHeaders });
+      return new Response(`Success! Your ID is ${filename}`, {
+        status: 200,
+        headers: myHeaders,
+      });
     } catch (error) {
       console.error(error);
       try {

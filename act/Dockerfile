@@ -8,8 +8,8 @@ RUN cargo install --path .
 
 FROM denoland/deno
 
-ENV QUEUE_PATH="./thread-art-vol/queue"
-ENV SAVE_PATH="./thread-art-vol/saves"
+ENV QUEUE_PATH="/thread-art-vol/queue"
+ENV SAVE_PATH="/thread-art-vol/saves"
 ENV EXECUTABLE_PATH="thread-art-rust"
 ENV CONCURRENCY=2
 
