@@ -9,8 +9,13 @@ async function workOnID(id: string): Promise<void> {
   const outputPath = join(SAVE_PATH, id, "RESULT.png");
   const cmd = [EXECUTABLE_PATH, inputPath, outputPath];
   const p = Deno.run({ cmd: cmd });
-  await p.status();
-  console.log("Done with", id + ".");
+  if((await p.status()).code != 0) {
+    const errorPath = join(SAVE_PATH, id, "ERROR")
+    await Deno.create(errorPath);
+    console.log("The algorithm crashed on", id + ".");
+  } else {
+    console.log("Done with", id + ".");
+  }
   p.close();
 }
 

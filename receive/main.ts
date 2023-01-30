@@ -33,8 +33,6 @@ await Deno.mkdir(QUEUE_PATH, { recursive: true });
 serve(handler, { port: PORT });
 
 async function handler(req: Request): Promise<Response> {
-  const myHeaders = new Headers();
-  myHeaders.append("Access-Control-Allow-Origin", "*");
   if (req.method == "GET") {
     try {
       const id = req.url.substring(req.url.lastIndexOf("/") + 1);
@@ -43,14 +41,28 @@ async function handler(req: Request): Promise<Response> {
       const data = new FormData();
       data.append("image", new Blob([imageFile], { type: "image/png" }));
       data.append("text", f);
-      return new Response(data, { status: 200, headers: myHeaders });
+      return new Response(data, { status: 200 });
     } catch (_) {
+      try {
+        const id = req.url.substring(req.url.lastIndexOf("/") + 1);
+        (await Deno.open(join(SAVE_PATH, id, "ERROR"))).close();
+        return new Response(null, { status: 204 });
+      } catch (_) {
+        // do nothing
+      }
       return new Response(
         "The image at entered ID (if it exists) is not done yet.",
-        { status: 400, headers: myHeaders },
+        { status: 400 },
       );
     }
   } else if (req.method == "POST") {
+    const reqLength = req.headers.get("Content-Length");
+    if(reqLength == null) {
+      return new Response("Not allowed", { status: 500 });
+    }
+    if(parseInt(reqLength) > 200000) {
+      return new Response("Image is too large! Try uploading a smaller image.", { status: 500 })
+    }
     const filename = RandomID();
     (await Deno.create(join(QUEUE_PATH, filename))).close();
 
@@ -96,8 +108,7 @@ async function handler(req: Request): Promise<Response> {
 
       await Deno.writeTextFile(join(QUEUE_PATH, filename), "OK");
       return new Response(`Success! Your ID is ${filename}`, {
-        status: 200,
-        headers: myHeaders,
+        status: 200
       });
     } catch (error) {
       console.error(error);
@@ -110,7 +121,7 @@ async function handler(req: Request): Promise<Response> {
       return new Response(
         "Something went wrong! Please wait before trying again. " +
           error.message,
-        { status: 500, headers: myHeaders },
+        { status: 500 },
       );
     }
   } else {

@@ -12,6 +12,12 @@ function getImage() {
     fetch(`${apiURL}/${id}`).then((res) => {
         const successHolder = document.getElementById("success-holder");
         successHolder.removeAttribute("hidden");
+        if (res.status == 204) {
+            successHolder.innerText = "The algorithm can not run correctly on this image. Try another.";
+            image.removeAttribute("hidden");
+            image.setAttribute("src", window.origin + "/error.png");
+            return;
+        }
         console.log(res);
         if (res.status == 200) {
             successHolder.innerText = "Success! See your image:";
