@@ -1,6 +1,11 @@
 body,
 input {
   font-size: 20px;
+  font-family: Iowan Old Style, Apple Garamond, Baskerville, Noto Serif, Times New Roman, Droid Serif, Times, Source Serif Pro, serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
+}
+
+kbd {
+  font-family: Menlo, Consolas, Monaco, Liberation Mono, Lucida Console, monospace;
 }
 
 #display-area {

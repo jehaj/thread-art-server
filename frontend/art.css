@@ -1,15 +1,20 @@
 body {
-    display: flex;
-    margin-top: 100px;
-    justify-content: center;
+  display: flex;
+  margin-top: 100px;
+  justify-content: center;
 }
 
 div {
-    width: 80%;
-    max-width: 1000px;
+  width: 80%;
+  max-width: 1000px;
 }
 
 body,
 input {
-    font-size: 20px;
+  font-family: Iowan Old Style, Apple Garamond, Baskerville, Noto Serif, Times New Roman, Droid Serif, Times, Source Serif Pro, serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
+  font-size: 20px;
+}
+
+kbd {
+  font-family: Menlo, Consolas, Monaco, Liberation Mono, Lucida Console, monospace;
 }
