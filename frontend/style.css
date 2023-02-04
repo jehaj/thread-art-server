@@ -23,7 +23,8 @@ body,
 
 #t-canvas,
 #t-button {
-  width: 400px;
+  max-width: 400px;
+  width: 80%;
 }
 
 #t-button {

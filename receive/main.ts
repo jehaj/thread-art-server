@@ -52,13 +52,13 @@ async function handler(req: Request): Promise<Response> {
       }
       return new Response(
         "The image at entered ID (if it exists) is not done yet.",
-        { status: 400 },
+        { status: 404 },
       );
     }
   } else if (req.method == "POST") {
     const reqLength = req.headers.get("Content-Length");
     if(reqLength == null) {
-      return new Response("Not allowed", { status: 500 });
+      return new Response("Not allowed", { status: 400 });
     }
     if(parseInt(reqLength) > 200000) {
       return new Response("Image is too large! Try uploading a smaller image.", { status: 500 })
@@ -73,7 +73,7 @@ async function handler(req: Request): Promise<Response> {
     }
     if (sum > QUEUE_LIMIT) {
       await Deno.remove(join(QUEUE_PATH, filename));
-      return new Response("Try again later! Queue is full.", { status: 500 });
+      return new Response("Try again later! Queue is full.", { status: 503 });
     }
     try {
       const f = await req.formData();
@@ -108,14 +108,14 @@ async function handler(req: Request): Promise<Response> {
 
       await Deno.writeTextFile(join(QUEUE_PATH, filename), "OK");
       return new Response(`Success! Your ID is ${filename}`, {
-        status: 200
+        status: 201
       });
     } catch (error) {
       console.error(error);
       try {
         await Deno.remove(join(QUEUE_PATH, filename));
-      } catch (_error) {
-        // nothing is done
+      } catch (error) {
+        console.error(error)
       }
 
       return new Response(

@@ -122,7 +122,7 @@ function upload(event) {
     mode: "same-origin",
     body: uploadData
   }).then((res) => {
-    if (res.status == 200) {
+    if (res.status == 201) {
       res.text().then((result) => {
         const id = result.split(" ")[4];
         window.location.assign(`art.html?id=${id}`);
