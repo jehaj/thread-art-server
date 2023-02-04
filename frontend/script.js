@@ -94,7 +94,7 @@ function draw() {
     doLoop = false;
   }
 
-  if(runButton.value == "Run") {
+  if (runButton.value == "Run") {
     ctx.clearRect(0, 0, 400, 400); // clear canvas
   }
 
@@ -134,4 +134,16 @@ function upload(event) {
       });
     }
   });
+}
+
+const idField = document.getElementById("enter-id");
+idField.addEventListener("change", goToId)
+const idBtn = document.getElementById("enter-btn");
+idBtn.addEventListener("click", goToId)
+
+function goToId(event) {
+  event.preventDefault();
+  if (idField.value.length >= 6) {
+    window.location.assign(`art.html?id=${idField.value}`);
+  }
 }
