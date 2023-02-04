@@ -1,12 +1,24 @@
 body {
   display: flex;
-  margin-top: 100px;
   justify-content: center;
 }
 
-div {
+.container {
+  margin-top: 100px;
+  display: flex;
   width: 80%;
   max-width: 1000px;
+  flex-direction: column;
+}
+
+img, input {
+  max-width: 400px;
+}
+
+.red {
+  background-color: rgb(179, 31, 31);
+  border-radius: 5px;
+  color: white;
 }
 
 body,

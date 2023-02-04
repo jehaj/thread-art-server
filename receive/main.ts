@@ -124,6 +124,16 @@ async function handler(req: Request): Promise<Response> {
         { status: 500 },
       );
     }
+  } else if (req.method == "DELETE") {
+    try {
+      const id = req.url.substring(req.url.lastIndexOf("/") + 1);
+      Deno.remove(join(SAVE_PATH, id, "RESULT.png"));
+      Deno.remove(join(SAVE_PATH, id), { recursive: true });
+      return new Response("Content deleted.", { status: 200 })
+    } catch (error) {
+      console.error(error)
+      return new Response("Could not delete content.", { status: 400 })
+    }
   } else {
     return new Response(
       "Not a valid request.",
