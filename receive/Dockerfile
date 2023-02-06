@@ -1,7 +1,7 @@
-FROM denoland/deno
+FROM denoland/deno:alpine
 
-RUN apt-get -qq update
-RUN apt-get -qq -y install imagemagick > /dev/null
+RUN apk -q update
+RUN apk -q add imagemagick
 
 ENV PORT=8001
 ENV QUEUE_PATH="/thread-art-vol/queue"
@@ -20,4 +20,4 @@ RUN deno cache deps.ts
 ADD . .
 RUN deno cache main.ts
 
-CMD [ "run", "--allow-net", "--allow-env", "--allow-read", "--allow-write", "--allow-run", "main.ts" ]
+CMD [ "run", "-A", "--unstable", "main.ts" ]

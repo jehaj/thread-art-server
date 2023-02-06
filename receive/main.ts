@@ -1,4 +1,4 @@
-import { join, loadSync, serve } from "./deps.ts";
+import { join, loadSync, Queue, serve } from "./deps.ts";
 
 loadSync();
 
@@ -17,18 +17,25 @@ function RandomID() {
 
 const QUEUE_LIMIT = parseInt(Deno.env.get("QUEUE_LIMIT") || "10");
 const SAVE_PATH = Deno.env.get("SAVE_PATH") || "./saves";
-const QUEUE_PATH = Deno.env.get("QUEUE_PATH") || "./queue";
 const PORT = parseInt(Deno.env.get("PORT") || "8001");
+const jobQueue = new Queue("job", {
+  connection: {
+    host: "redis",
+  },
+  defaultJobOptions: {
+    removeOnFail: true,
+    attempts: 1,
+    removeOnComplete: true,
+  },
+});
 
 console.log("Running with settings:");
 console.log("QUEUE_LIMIT =", QUEUE_LIMIT);
 console.log("SAVE_PATH =", SAVE_PATH);
-console.log("QUEUE_PATH =", QUEUE_PATH);
 console.log("PORT =", PORT);
 console.log("Working at:", Deno.cwd());
 
 await Deno.mkdir(SAVE_PATH, { recursive: true });
-await Deno.mkdir(QUEUE_PATH, { recursive: true });
 
 serve(handler, { port: PORT });
 
@@ -57,22 +64,16 @@ async function handler(req: Request): Promise<Response> {
     }
   } else if (req.method == "POST") {
     const reqLength = req.headers.get("Content-Length");
-    if(reqLength == null) {
+    if (reqLength == null) {
       return new Response("Not allowed", { status: 400 });
     }
-    if(parseInt(reqLength) > 200000) {
-      return new Response("Image is too large! Try uploading a smaller image.", { status: 500 })
+    if (parseInt(reqLength) > 200000) {
+      return new Response(
+        "Image is too large! Try uploading a smaller image.",
+        { status: 500 },
+      );
     }
-    const filename = RandomID();
-    (await Deno.create(join(QUEUE_PATH, filename))).close();
-
-    const d = Deno.readDir(QUEUE_PATH);
-    let sum = 0;
-    for await (const _ of d) {
-      sum += 1;
-    }
-    if (sum > QUEUE_LIMIT) {
-      await Deno.remove(join(QUEUE_PATH, filename));
+    if (jobQueue.count() > QUEUE_LIMIT) {
       return new Response("Try again later! Queue is full.", { status: 503 });
     }
     try {
@@ -81,6 +82,7 @@ async function handler(req: Request): Promise<Response> {
       if (imageEntry == null || typeof imageEntry != "object") {
         throw new Error("Image not contained in form data.");
       }
+      const filename = RandomID();
       const image = new Uint8Array(await imageEntry.arrayBuffer());
       await Deno.mkdir(join(SAVE_PATH, filename), { recursive: true });
       await Deno.writeFile(join(SAVE_PATH, filename, "INPUT.png"), image, {
@@ -105,19 +107,12 @@ async function handler(req: Request): Promise<Response> {
         throw Error("Bad image uploaded! Try another.");
       }
       p.close();
-
-      await Deno.writeTextFile(join(QUEUE_PATH, filename), "OK");
+      jobQueue.add(filename);
       return new Response(`Success! Your ID is ${filename}`, {
-        status: 201
+        status: 201,
       });
     } catch (error) {
       console.error(error);
-      try {
-        await Deno.remove(join(QUEUE_PATH, filename));
-      } catch (error) {
-        console.error(error)
-      }
-
       return new Response(
         "Something went wrong! Please wait before trying again. " +
           error.message,
@@ -129,10 +124,10 @@ async function handler(req: Request): Promise<Response> {
       const id = req.url.substring(req.url.lastIndexOf("/") + 1);
       Deno.remove(join(SAVE_PATH, id, "RESULT.png"));
       Deno.remove(join(SAVE_PATH, id), { recursive: true });
-      return new Response("Content deleted.", { status: 200 })
+      return new Response("Content deleted.", { status: 200 });
     } catch (error) {
-      console.error(error)
-      return new Response("Could not delete content.", { status: 400 })
+      console.error(error);
+      return new Response("Could not delete content.", { status: 400 });
     }
   } else {
     return new Response(

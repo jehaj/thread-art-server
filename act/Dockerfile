@@ -6,7 +6,7 @@ WORKDIR /usr/src/thread-art-rust
 RUN cargo install --path .
 
 
-FROM denoland/deno
+FROM denoland/deno:alpine
 
 ENV QUEUE_PATH="/thread-art-vol/queue"
 ENV SAVE_PATH="/thread-art-vol/saves"
@@ -25,4 +25,4 @@ RUN deno cache deps.ts
 ADD . .
 RUN deno cache main.ts
 
-CMD [ "run", "--allow-env", "--allow-read", "--allow-write", "--allow-run", "main.ts" ]
+CMD [ "run", "-A", "--unstable", "main.ts" ]

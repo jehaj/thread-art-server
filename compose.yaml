@@ -1,4 +1,6 @@
 services:
+  redis:
+    image: redis:alpine
   receive:
     build: "receive/"
     restart: unless-stopped
