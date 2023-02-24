@@ -1,3 +1,13 @@
+body {
+    font-family: 'Noto Serif', 'Liberation Serif', 'Iowan Old Style', 'Apple Garamond', Baskerville, 'Times New Roman', 'Droid Serif', Times, 'Source Serif Pro', serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+}
+
+#full {
+    display: flex;
+    height: 100vh;
+    align-items: center;
+}
+
 #carousel {
     display: flex;
     overflow-x: auto;
@@ -12,16 +22,17 @@
     border-radius: 15px;
     display: flex;
     flex-direction: column;
-    min-width: 300px;
-    width: 300px;
-    height: 300px;
+    min-width: 14rem;
+    width: 14rem;
+    height: 14rem;
     justify-content: center;
     align-items: center;
-    font-size: 6em;
+    font-size: 6rem;
     margin: 10px;
 }
 
 p {
     margin-top: 0px;
-    font-size: 0.3em;
+    font-size: 2rem;
+    color: darkslategray;
 }
