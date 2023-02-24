@@ -1,0 +1,27 @@
+#carousel {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    flex-direction: row;
+}
+
+#carousel>div {
+    background-color: #ebc8bb;
+    scroll-snap-align: center;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    min-width: 300px;
+    width: 300px;
+    height: 300px;
+    justify-content: center;
+    align-items: center;
+    font-size: 6em;
+    margin: 10px;
+}
+
+p {
+    margin-top: 0px;
+    font-size: 0.3em;
+}
