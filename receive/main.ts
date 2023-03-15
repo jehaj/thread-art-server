@@ -20,7 +20,7 @@ const SAVE_PATH = Deno.env.get("SAVE_PATH") || "./saves";
 const PORT = parseInt(Deno.env.get("PORT") || "8001");
 const jobQueue = new Queue("job", {
   connection: {
-    host: "redis",
+    host: "localhost",
   },
   defaultJobOptions: {
     removeOnFail: true,

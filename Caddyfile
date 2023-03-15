@@ -2,7 +2,7 @@
 
 handle_path /api/* {
     reverse_proxy {
-        to receive:8001
+        to localhost:8001
     }
 }
 

@@ -7,7 +7,7 @@ const CONCURRENCY = parseInt(Deno.env.get("CONCURRENCY") || "2");
 const worker = new Worker("job", workOnID, {
   concurrency: CONCURRENCY,
   connection: {
-    host: "redis",
+    host: "localhost",
   },
 });
 
