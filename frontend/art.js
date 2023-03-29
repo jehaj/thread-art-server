@@ -26,6 +26,10 @@ function getImage() {
         const imageUrl = URL.createObjectURL(data.get("image"));
         image.setAttribute("src", imageUrl);
         image.removeAttribute("hidden");
+
+        // show text carousel
+        const textData = data.get("text");
+        updateCarousel(textData);
       });
       deleteBtn.removeAttribute("hidden");
     } else {
@@ -34,6 +38,22 @@ function getImage() {
       timeout = 2 * timeout;
     }
   });
+}
+
+async function updateCarousel(data) {
+  const result = data.split('\n')[1].split(',');
+
+  const carousel = document.getElementById("carousel");
+  for (let i = 0; i < result.length - 1; i++) {
+    const step = document.createElement("div");
+    const point = result[i];
+    step.id = "step-" + (i + 1);
+    step.innerText = point;
+    const stepnumber = document.createElement("p");
+    stepnumber.innerText = (i + 1);
+    step.appendChild(stepnumber);
+    carousel.appendChild(step);
+  }
 }
 
 getImage();
