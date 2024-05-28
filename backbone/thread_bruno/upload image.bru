@@ -5,7 +5,11 @@ meta {
 }
 
 post {
-  url: {{baseUrl}}/api/
-  body: none
+  url: {{baseUrl}}/api/upload
+  body: multipartForm
   auth: none
+}
+
+body:multipart-form {
+  image: @file(C:\Users\nikol\Sync\Billeder\Profilbilleder\natur.jpg)
 }
