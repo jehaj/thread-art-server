@@ -23,14 +23,23 @@ func (h *Handler) UploadImage(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseMultipartForm(MaxFileSize)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
+		return
 	}
-	imageReader, imageHeader, _ := r.FormFile("imageData")
+	imageReader, imageHeader, err := r.FormFile("image")
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 	contentType := imageHeader.Header.Get("Content-Type")
 	contentTypeEnd := strings.Split(contentType, "/")[1]
 	if !slices.Contains([]string{"jpeg", "jpg", "png"}, contentTypeEnd) {
 		w.WriteHeader(http.StatusBadRequest)
 	}
 	imageData, _ := io.ReadAll(imageReader)
-	h.imageSaver.SaveImage("upload.png", imageData)
+	err = h.imageSaver.SaveImage("upload.png", imageData)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 	w.WriteHeader(http.StatusCreated)
 }
