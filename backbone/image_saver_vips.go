@@ -10,7 +10,7 @@ import (
 type ImageSaverVips struct {
 }
 
-func (saver ImageSaverVips) SaveImage(filename string, imageData []byte) error {
+func (saver ImageSaverVips) SaveImage(filename string, imageReader io.Reader) error {
 	imageData, _ := io.ReadAll(imageReader)
 	imageData, _ = bimg.Resize(imageData, bimg.Options{Height: 400, Width: 400})
 	bimg.Write("out.jpg", imageData)

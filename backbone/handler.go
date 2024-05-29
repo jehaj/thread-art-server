@@ -1,7 +1,6 @@
 package main
 
 import (
-	"io"
 	"net/http"
 	"slices"
 	"strings"
@@ -23,11 +22,13 @@ func (h *Handler) UploadImage(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseMultipartForm(MaxFileSize)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
 		return
 	}
 	imageReader, imageHeader, err := r.FormFile("image")
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
 		return
 	}
 	contentType := imageHeader.Header.Get("Content-Type")
@@ -35,10 +36,10 @@ func (h *Handler) UploadImage(w http.ResponseWriter, r *http.Request) {
 	if !slices.Contains([]string{"jpeg", "jpg", "png"}, contentTypeEnd) {
 		w.WriteHeader(http.StatusBadRequest)
 	}
-	imageData, _ := io.ReadAll(imageReader)
-	err = h.imageSaver.SaveImage("upload.png", imageData)
+	err = h.imageSaver.SaveImage("upload.png", imageReader)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
 		return
 	}
 	w.WriteHeader(http.StatusCreated)
