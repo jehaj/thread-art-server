@@ -23,29 +23,28 @@ func (saver *ImageSaverStd) SaveImage(filename string, imageReader io.Reader) er
 	// size needs to be within bounds [400, 1024]. The file limit
 	// is already limited by MaxFileSize in handler.go.
 	imageData, _ := io.ReadAll(imageReader)
-	imageReader = bytes.NewReader(imageData)
-	config, _, err := image.DecodeConfig(imageReader)
+	imageHeight, imageWidth, err := checkBounds(imageReader, imageData)
 	if err != nil {
 		return err
-	}
-	imageHeight := config.Height
-	imageWidth := config.Width
-	maxImageSize := 1024
-	minImageSize := 400
-	if min(imageWidth, imageHeight) > maxImageSize {
-		return errors.New("image too large")
-	} else if max(imageWidth, imageHeight) < minImageSize {
-		return errors.New("image too small")
 	}
 
-	// Image is not out of bounds, try to decode it.
-	imageReader = bytes.NewReader(imageData)
-	decodedImage, _, err := image.Decode(imageReader)
+	grayImage, err := convertImageToGray(imageData, 400, imageHeight, imageWidth)
 	if err != nil {
 		return err
 	}
+
+	err = writeImage(filename, grayImage)
+	return err
+}
+
+func convertImageToGray(imageData []byte, grayImageSize, imageHeight int, imageWidth int) (*image.Gray, error) {
+	// Image is not out of bounds, try to decode it.
+	imageReader := bytes.NewReader(imageData)
+	decodedImage, _, err := image.Decode(imageReader)
+	if err != nil {
+		return nil, err
+	}
 	// Create another image that is grayscale.
-	grayImageSize := 400
 	grayImage := image.NewGray(image.Rect(0, 0, grayImageSize, grayImageSize))
 	// Only considers last pixel in section to resize the image down to 400x400.
 	for py := 0; py < imageHeight; py++ {
@@ -58,7 +57,10 @@ func (saver *ImageSaverStd) SaveImage(filename string, imageReader io.Reader) er
 			grayImage.SetGray(nx, ny, newColor)
 		}
 	}
+	return grayImage, nil
+}
 
+func writeImage(filename string, grayImage *image.Gray) error {
 	// Write the grayscale image to disk
 	file, err := os.Create(filename)
 	if err != nil {
@@ -70,4 +72,22 @@ func (saver *ImageSaverStd) SaveImage(filename string, imageReader io.Reader) er
 		return err
 	}
 	return nil
+}
+
+func checkBounds(imageReader io.Reader, imageData []byte) (int, int, error) {
+	imageReader = bytes.NewReader(imageData)
+	config, _, err := image.DecodeConfig(imageReader)
+	if err != nil {
+		return 0, 0, err
+	}
+	imageHeight := config.Height
+	imageWidth := config.Width
+	maxImageSize := 1024
+	minImageSize := 400
+	if min(imageWidth, imageHeight) > maxImageSize {
+		return 0, 0, errors.New("image too large")
+	} else if max(imageWidth, imageHeight) < minImageSize {
+		return 0, 0, errors.New("image too small")
+	}
+	return imageHeight, imageWidth, err
 }
