@@ -19,7 +19,7 @@ func main() {
 	if err != nil {
 		panic("failed to connect database")
 	}
-	s := Service{db}
+	s := Service{db, workerPool()}
 	s.initialize()
 	var imageSaver ImageSaver = &ImageSaverStd{}
 	if args.Vips {

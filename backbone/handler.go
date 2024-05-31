@@ -45,25 +45,35 @@ func (h *Handler) UploadImage(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 		return
 	}
-	// get user ID - if none given or
-	// the given one is not valid
-	userID := getRandomUserID()
+	// get user ID
+	userIDCookie, err := r.Cookie("userID")
+	var userID string
+	if err != nil {
+		userID = getRandomUserID()
+	} else {
+		userID = userIDCookie.Value
+		if !h.s.ValidUserId(userID) {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("UserID is not valid"))
+			return
+		}
+	}
 	// get ID for the new image
-	imageID := uuid.New()
+	imageID := uuid.New().String()
 	err = h.imageSaver.SaveImage("upload.png", imageReader)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte(err.Error()))
 		return
 	}
-	err = h.s.AddUserWithImage(&User{userID, []Image{{imageID.String(), userID, time.Now(), false}}})
+	err = h.s.AddUserWithImage(&User{userID, []Image{{imageID, userID, time.Now(), false}}})
 	if err != nil {
 		w.Write([]byte(err.Error()))
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	// tell worker to start
-
+	h.s.AddImageToQueue(imageID)
 	w.WriteHeader(http.StatusCreated)
 	w.Write([]byte(userID))
 }
