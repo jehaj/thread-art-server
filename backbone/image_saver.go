@@ -9,6 +9,7 @@ import (
 	"image/png"
 	"io"
 	"os"
+	"path/filepath"
 )
 
 type ImageSaver interface {
@@ -18,7 +19,7 @@ type ImageSaver interface {
 type ImageSaverStd struct {
 }
 
-func (saver *ImageSaverStd) SaveImage(filename string, imageReader io.Reader) error {
+func (saver *ImageSaverStd) SaveImage(imageID string, imageReader io.Reader) error {
 	// Go can decode arbitrarily large images, therefore the
 	// size needs to be within bounds [400, 1024]. The file limit
 	// is already limited by MaxFileSize in handler.go.
@@ -33,7 +34,7 @@ func (saver *ImageSaverStd) SaveImage(filename string, imageReader io.Reader) er
 		return err
 	}
 
-	err = writeImage(filename, grayImage)
+	err = writeImage(filepath.Join(args.DataPath, imageID, "in.png"), grayImage)
 	return err
 }
 
@@ -60,9 +61,9 @@ func convertImageToGray(imageData []byte, grayImageSize, imageHeight int, imageW
 	return grayImage, nil
 }
 
-func writeImage(filename string, grayImage *image.Gray) error {
+func writeImage(filepath string, grayImage *image.Gray) error {
 	// Write the grayscale image to disk
-	file, err := os.Create(filename)
+	file, err := os.Create(filepath)
 	if err != nil {
 		return err
 	}

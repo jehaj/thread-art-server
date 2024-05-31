@@ -1,13 +1,16 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
+	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"log"
 	"math/rand/v2"
 	"mime/multipart"
 	"net/http"
 	"os"
+	"path/filepath"
 	"slices"
 	"strconv"
 	"strings"
@@ -60,7 +63,8 @@ func (h *Handler) UploadImage(w http.ResponseWriter, r *http.Request) {
 	}
 	// get ID for the new image
 	imageID := uuid.New().String()
-	err = h.imageSaver.SaveImage("upload.png", imageReader)
+	os.Mkdir(filepath.Join(args.DataPath, imageID), 0750)
+	err = h.imageSaver.SaveImage(imageID, imageReader)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte(err.Error()))
@@ -76,6 +80,47 @@ func (h *Handler) UploadImage(w http.ResponseWriter, r *http.Request) {
 	h.s.AddImageToQueue(imageID)
 	w.WriteHeader(http.StatusCreated)
 	w.Write([]byte(userID))
+}
+
+// GetImage gets the image. The id has been checked to be valid.
+func (h *Handler) GetImage(w http.ResponseWriter, r *http.Request) {
+	imageID := chi.URLParam(r, "id")
+	file, err := os.ReadFile(filepath.Join(args.DataPath, imageID, "out.png"))
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+	w.Header().Set("Content-Type", "image/png")
+	w.Write(file)
+}
+
+type points struct {
+	NumberOfPoints int
+	PointIndex     []int
+}
+
+// GetPoints gets the points as json. The id has been checked to be valid.
+func (h *Handler) GetPoints(w http.ResponseWriter, r *http.Request) {
+	imageID := chi.URLParam(r, "id")
+	file, err := os.ReadFile(filepath.Join(args.DataPath, imageID, "RESULT.txt"))
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+	lines := strings.Split(string(file), "\n")
+	n, _ := strconv.Atoi(lines[0])
+	ps := strings.Split(lines[1], ",")
+	p := make([]int, len(ps))
+	for i, pc := range ps {
+		atoi, _ := strconv.Atoi(pc)
+		p[i] = atoi
+	}
+	pointsStruct := points{n, p}
+	log.Println(pointsStruct)
+	pointsString, err := json.Marshal(pointsStruct)
+	log.Println(pointsString)
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(pointsString)
 }
 
 // getRandomUserID returns a random ID with the form

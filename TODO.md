@@ -11,9 +11,9 @@ The backend / API. Written in go.
 - [x] link ID and image in database (image gets UUID, but user gets funny ID)
 - [x] send back user id (which should be stored automatically for the user - can be ID given by user if exists)
 - [x] queue to worker pool
-- [ ] worker uses thread-art-rust
-- [ ] send back image
-- [ ] send back points.txt (as json array?)
+- [x] worker uses thread-art-rust
+- [x] send back image
+- [x] send back points.txt (as json array)
 
 ## view
 What you see and can click on to interact with the project. It uses the API. It uses bulma, vuejs and typescript.

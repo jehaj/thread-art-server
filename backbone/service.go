@@ -27,10 +27,15 @@ func (s *Service) AddUserWithImage(user *User) error {
 }
 
 func (s *Service) ValidUserId(userID string) bool {
-	result := s.DB.First(User{userID, []Image{}})
+	result := s.DB.First(&User{}, userID)
 	return result.RowsAffected == 1
 }
 
 func (s *Service) AddImageToQueue(imageID string) {
 	s.jobs <- imageID
+}
+
+func (s *Service) ValidImageId(imageID string) bool {
+	result := s.DB.First(&Image{}, "image_id = ?", imageID)
+	return result.RowsAffected == 1
 }
