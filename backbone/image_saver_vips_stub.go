@@ -8,5 +8,5 @@ type ImageSaverVips struct {
 }
 
 func (saver *ImageSaverVips) SaveImage(filename string, imageReader io.Reader) error {
-	panic("vips is not supported on windows!")
+	panic("vips is not yet supported on windows!")
 }

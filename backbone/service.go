@@ -19,3 +19,8 @@ func (s *Service) initialize() {
 		log.Println(err.Error())
 	}
 }
+
+func (s *Service) AddUserWithImage(user *User) error {
+	s.DB.Create(user)
+	return nil
+}

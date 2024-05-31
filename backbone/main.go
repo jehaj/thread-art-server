@@ -6,7 +6,6 @@ import (
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"net/http"
-	"time"
 )
 
 var args struct {
@@ -22,13 +21,12 @@ func main() {
 	}
 	s := Service{db}
 	s.initialize()
-	db.Create(User{"dorthe", []Image{}})
-	db.Create(Image{"dorthe", "dorthe", time.Now(), false})
 	var imageSaver ImageSaver = &ImageSaverStd{}
 	if args.Vips {
 		imageSaver = &ImageSaverVips{}
 	}
 	h := Handler{&s, imageSaver}
+	InitializeLists()
 	r.Get("/", h.GetIndex)
 	r.Post("/api/upload", h.UploadImage)
 	http.ListenAndServe("localhost:8080", r)
