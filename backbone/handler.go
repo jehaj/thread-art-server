@@ -31,21 +31,21 @@ func InitializeLists() {
 	colorFile, err1 := os.ReadFile("color-list.txt")
 	animalFile, err2 := os.ReadFile("animal-list.txt")
 	if err1 != nil || err2 != nil {
-		log.Panicln(err1.Error(), err2.Error())
+		log.Panicln("Error reading color or animal list.")
 	}
 	colorList = strings.Split(string(colorFile), "\n")
 	animalList = strings.Split(string(animalFile), "\n")
 }
 
-func (h *Handler) GetIndex(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Hello World"))
+func (h *Handler) GetIndex(w http.ResponseWriter, _ *http.Request) {
+	_, _ = w.Write([]byte("Hello World"))
 }
 
 func (h *Handler) UploadImage(w http.ResponseWriter, r *http.Request) {
 	err, imageReader := getImageFromRequest(w, r)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
+		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
 	// get user ID
@@ -57,29 +57,29 @@ func (h *Handler) UploadImage(w http.ResponseWriter, r *http.Request) {
 		userID = userIDCookie.Value
 		if !h.s.ValidUserId(userID) {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("UserID is not valid"))
+			_, _ = w.Write([]byte("UserID is not valid"))
 			return
 		}
 	}
 	// get ID for the new image
 	imageID := uuid.New().String()
-	os.Mkdir(filepath.Join(args.DataPath, imageID), 0750)
+	_ = os.Mkdir(filepath.Join(args.DataPath, imageID), 0750)
 	err = h.imageSaver.SaveImage(imageID, imageReader)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
+		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
 	err = h.s.AddUserWithImage(&User{userID, []Image{{imageID, userID, time.Now(), false}}})
 	if err != nil {
-		w.Write([]byte(err.Error()))
+		_, _ = w.Write([]byte(err.Error()))
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	// tell worker to start
 	h.s.AddImageToQueue(imageID)
 	w.WriteHeader(http.StatusCreated)
-	w.Write([]byte(userID))
+	_, _ = w.Write([]byte(userID))
 }
 
 // GetImage gets the image. The id has been checked to be valid.
@@ -91,7 +91,7 @@ func (h *Handler) GetImage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Content-Type", "image/png")
-	w.Write(file)
+	_, _ = w.Write(file)
 }
 
 type points struct {
@@ -120,7 +120,7 @@ func (h *Handler) GetPoints(w http.ResponseWriter, r *http.Request) {
 	pointsString, err := json.Marshal(pointsStruct)
 	log.Println(pointsString)
 	w.Header().Set("Content-Type", "application/json")
-	w.Write(pointsString)
+	_, _ = w.Write(pointsString)
 }
 
 // getRandomUserID returns a random ID with the form
