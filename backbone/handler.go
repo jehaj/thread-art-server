@@ -135,7 +135,7 @@ func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	w.Write(jsonUser)
+	_, _ = w.Write(jsonUser)
 }
 
 // getRandomUserID returns a random ID with the form

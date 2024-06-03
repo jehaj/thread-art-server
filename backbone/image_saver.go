@@ -53,7 +53,6 @@ func convertImageToGray(imageData []byte, grayImageSize, imageHeight int, imageW
 			pColor := decodedImage.At(px, py)
 			ny := grayImageSize * py / imageHeight
 			nx := grayImageSize * px / imageWidth
-			var _ uint32 = uint32(imageHeight / grayImageSize * imageWidth / grayImageSize)
 			newColor := color.GrayModel.Convert(pColor).(color.Gray)
 			grayImage.SetGray(nx, ny, newColor)
 		}
