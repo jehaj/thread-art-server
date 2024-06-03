@@ -1,15 +1,18 @@
 package main
 
-import "time"
+import (
+	"gorm.io/gorm"
+)
 
 type User struct {
-	UserID string  `gorm:"primaryKey"`
-	Images []Image `gorm:"foreignKey:UserID"`
+	ID string `gorm:"primaryKey"`
+	gorm.Model
+	Images []Image
 }
 
 type Image struct {
-	ImageID   string `gorm:"primaryKey"`
-	UserID    string
-	Timestamp time.Time
-	Finished  bool
+	ID string `gorm:"primaryKey"`
+	gorm.Model
+	UserID   string
+	Finished bool
 }

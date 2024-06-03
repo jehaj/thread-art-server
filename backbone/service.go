@@ -36,13 +36,13 @@ func (s *Service) AddImageToQueue(imageID string) {
 }
 
 func (s *Service) ValidImageId(imageID string) bool {
-	result := s.DB.First(&Image{}, "image_id = ?", imageID)
+	result := s.DB.First(&Image{}, "id = ?", imageID)
 	return result.RowsAffected == 1
 }
 
 func (s *Service) GetUser(userID string) (User, error) {
 	var user User
-	res := s.DB.Preload("Images").First(&user, "user_id = ?", userID)
+	res := s.DB.Preload("Images").First(&user, "id = ?", userID)
 	err := res.Error
 	if err != nil {
 		return User{}, err

@@ -14,7 +14,6 @@ import (
 	"slices"
 	"strconv"
 	"strings"
-	"time"
 )
 
 type Handler struct {
@@ -70,7 +69,7 @@ func (h *Handler) UploadImage(w http.ResponseWriter, r *http.Request) {
 		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
-	err = h.s.AddUserWithImage(&User{userID, []Image{{imageID, userID, time.Now(), false}}})
+	err = h.s.AddUserWithImage(&User{ID: userID, Images: []Image{{ID: imageID, UserID: userID, Finished: false}}})
 	if err != nil {
 		_, _ = w.Write([]byte(err.Error()))
 		w.WriteHeader(http.StatusInternalServerError)
