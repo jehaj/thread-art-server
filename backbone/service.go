@@ -39,3 +39,13 @@ func (s *Service) ValidImageId(imageID string) bool {
 	result := s.DB.First(&Image{}, "image_id = ?", imageID)
 	return result.RowsAffected == 1
 }
+
+func (s *Service) GetUser(userID string) (User, error) {
+	var user User
+	res := s.DB.Preload("Images").First(&user, "user_id = ?", userID)
+	err := res.Error
+	if err != nil {
+		return User{}, err
+	}
+	return user, nil
+}

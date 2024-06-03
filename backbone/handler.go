@@ -123,6 +123,22 @@ func (h *Handler) GetPoints(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write(pointsString)
 }
 
+// GetUser gets the user based on id in url. User has lists of images.
+func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
+	userID := chi.URLParam(r, "id")
+	user, err := h.s.GetUser(userID)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+	jsonUser, err := json.Marshal(user)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	w.Write(jsonUser)
+}
+
 // getRandomUserID returns a random ID with the form
 // <number>-<color>-<animal>. It depends on the entries in
 // the files animal-list.txt and color-list.txt
@@ -132,7 +148,9 @@ func getRandomUserID() string {
 	randomColor := colorList[randomIndex]
 	randomIndex = rand.IntN(len(animalList))
 	randomAnimal := animalList[randomIndex]
-	return strings.Join([]string{strconv.Itoa(randomNumber), randomColor, randomAnimal}, "-")
+	combination := []string{strconv.Itoa(randomNumber), randomColor, randomAnimal}
+	randomUserID := strings.Join(combination, "-")
+	return randomUserID
 }
 
 func getImageFromRequest(w http.ResponseWriter, r *http.Request) (error, multipart.File) {

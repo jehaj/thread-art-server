@@ -35,6 +35,7 @@ func main() {
 	InitializeLists()
 	r.Get("/", h.GetIndex)
 	r.Post("/api/upload", h.UploadImage)
+	r.Get("/api/user/{id}", h.GetUser)
 	r.Route("/api/{id}", func(r chi.Router) {
 		r.Use(ImageIdMustBeValid)
 		r.Get("/image.png", h.GetImage)
