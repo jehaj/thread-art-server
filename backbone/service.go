@@ -26,8 +26,13 @@ func (s *Service) AddUserWithImage(user *User) error {
 	return nil
 }
 
+func (s *Service) AddImage(image *Image) error {
+	s.DB.Create(image)
+	return nil
+}
+
 func (s *Service) ValidUserId(userID string) bool {
-	result := s.DB.First(&User{}, userID)
+	result := s.DB.First(&User{}, "id = ?", userID)
 	return result.RowsAffected == 1
 }
 

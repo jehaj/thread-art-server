@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/alexflint/go-arg"
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/cors"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"net/http"
@@ -21,6 +22,8 @@ func main() {
 	arg.MustParse(&args)
 	_ = os.Mkdir(args.DataPath, 0750)
 	r := chi.NewRouter()
+	c := cors.AllowAll()
+	r.Use(c.Handler)
 	db, err := gorm.Open(sqlite.Open(args.Database), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")

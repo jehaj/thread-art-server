@@ -50,6 +50,7 @@ func (h *Handler) UploadImage(w http.ResponseWriter, r *http.Request) {
 	// get user ID
 	userIDCookie, err := r.Cookie("userID")
 	var userID string
+	userAlreadyExists := false
 	if err != nil {
 		userID = getRandomUserID()
 	} else {
@@ -59,6 +60,7 @@ func (h *Handler) UploadImage(w http.ResponseWriter, r *http.Request) {
 			_, _ = w.Write([]byte("UserID is not valid"))
 			return
 		}
+		userAlreadyExists = true
 	}
 	// get ID for the new image
 	imageID := uuid.New().String()
@@ -69,7 +71,11 @@ func (h *Handler) UploadImage(w http.ResponseWriter, r *http.Request) {
 		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
-	err = h.s.AddUserWithImage(&User{ID: userID, Images: []Image{{ID: imageID, UserID: userID, Finished: false}}})
+	if userAlreadyExists {
+		err = h.s.AddImage(&Image{ID: imageID, UserID: userID, Finished: false})
+	} else {
+		err = h.s.AddUserWithImage(&User{ID: userID, Images: []Image{{ID: imageID, UserID: userID, Finished: false}}})
+	}
 	if err != nil {
 		_, _ = w.Write([]byte(err.Error()))
 		w.WriteHeader(http.StatusInternalServerError)
