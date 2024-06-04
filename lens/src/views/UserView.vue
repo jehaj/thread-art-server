@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import {RouterLink, useRoute} from "vue-router";
 import {ref} from "vue";
 import ImageBox from "@/components/ImageBox.vue";
 import {API_URL} from "@/main";
 import type {Image} from "@/models";
-
-let id = "123";
+import {useRoute} from "vue-router";
 
 let images = ref<Image[]>();
 
