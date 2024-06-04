@@ -6,7 +6,7 @@ a user uploaded image. It contains multiple projects that work together as one.
 It is a rework of the work done at `thread-art-archive`. A lot of work was 
 done and can be found there - including the algorithm in different languages.
 
-Try visiting and using it at [jehaj.dk](https://jehaj.dk).
+Try visiting and using it at [art.jehaj.dk](https://art.jehaj.dk).
 
 ## view
 `view` is the frontend part of `thread-art-server`. It uses
@@ -17,9 +17,8 @@ Try visiting and using it at [jehaj.dk](https://jehaj.dk).
 ## backbone
 Is the API server. It is written in `go`. It uses
 - gorm
-- mux
+- chi
 - sqlite
-- zeromq
 - [thread-art](https://github.com/jehaj/thread-art-rust) (the algorithm)
 `bruno` is used to check the API endpoints.
 
@@ -42,6 +41,6 @@ Visit [scoop.sh](https://scoop.sh) if trouble arises.
 
 
 I use JetBrains editors, but again that is optional. WebStorm is used for 
-`view` and GoLand for `backbone`.
+`lens` and GoLand for `backbone`.
 
 Further details can be found in the respective folders `README.md`.
