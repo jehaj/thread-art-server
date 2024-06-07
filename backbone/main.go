@@ -10,6 +10,7 @@ import (
 	"os"
 )
 
+// args is the struct that defines the arguments you can give to the binary to change the behavior.
 var args struct {
 	Vips     bool   `default:"false"`
 	DataPath string `default:"./data/"`
@@ -18,6 +19,9 @@ var args struct {
 
 var s Service
 
+// main is the function that is called when running go run . and is our entry to this program.
+// it figures out the arguments that has been used to run this program and dependency injects them
+// into the handler and service.
 func main() {
 	arg.MustParse(&args)
 	_ = os.Mkdir(args.DataPath, 0750)
@@ -48,6 +52,8 @@ func main() {
 	_ = http.ListenAndServe("localhost:8080", r)
 }
 
+// ImageIdMustBeValid is a middleware that checks that the image ID given in the parameter id is valid (i.e. in the
+// database).
 func ImageIdMustBeValid(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		imageID := chi.URLParam(r, "id")

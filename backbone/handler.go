@@ -26,6 +26,8 @@ const MaxFileSize int64 = 1024 * 1024 * 5
 var colorList []string
 var animalList []string
 
+// InitializeLists must be called before UploadImage can be called. It loads the colors and animals used to
+// generate the random userID.
 func InitializeLists() {
 	colorFile, err1 := os.ReadFile("color-list.txt")
 	animalFile, err2 := os.ReadFile("animal-list.txt")
@@ -36,10 +38,14 @@ func InitializeLists() {
 	animalList = strings.Split(string(animalFile), "\n")
 }
 
+// GetIndex returns the index file index.html.
 func (h *Handler) GetIndex(w http.ResponseWriter, _ *http.Request) {
 	_, _ = w.Write([]byte("Hello World"))
 }
 
+// UploadImage is a handler function that expects an image File in a multipart form with the name "image". If there is
+// no Authorization a new ID will be generated and sent back. If this is in the next request the new image will be saved
+// to the same user.
 func (h *Handler) UploadImage(w http.ResponseWriter, r *http.Request) {
 	err, imageReader := getImageFromRequest(w, r)
 	if err != nil {
@@ -170,6 +176,8 @@ func getRandomUserID() string {
 	return randomUserID
 }
 
+// getImageFromRequest reads the multipart form and returns a file reader to the image file with name "image". The image
+// must be a jpg or png.
 func getImageFromRequest(w http.ResponseWriter, r *http.Request) (error, multipart.File) {
 	r.Body = http.MaxBytesReader(w, r.Body, MaxFileSize)
 	err := r.ParseMultipartForm(MaxFileSize)
