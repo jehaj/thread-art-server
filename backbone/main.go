@@ -41,7 +41,8 @@ func main() {
 	r.Get("/api/user/{id}", h.GetUser)
 	r.Route("/api/{id}", func(r chi.Router) {
 		r.Use(ImageIdMustBeValid)
-		r.Get("/image.png", h.GetImage)
+		r.Get("/in.png", h.GetImageOrig)
+		r.Get("/out.png", h.GetImage)
 		r.Get("/points", h.GetPoints)
 	})
 	_ = http.ListenAndServe("localhost:8080", r)

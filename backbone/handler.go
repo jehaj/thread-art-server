@@ -99,6 +99,18 @@ func (h *Handler) GetImage(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write(file)
 }
 
+// GetImageOrig gets the image. The id has been checked to be valid.
+func (h *Handler) GetImageOrig(w http.ResponseWriter, r *http.Request) {
+	imageID := chi.URLParam(r, "id")
+	file, err := os.ReadFile(filepath.Join(args.DataPath, imageID, "in.png"))
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+	w.Header().Set("Content-Type", "image/png")
+	_, _ = w.Write(file)
+}
+
 type points struct {
 	NumberOfPoints int
 	PointIndex     []int

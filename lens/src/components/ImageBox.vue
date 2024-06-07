@@ -14,7 +14,12 @@ let id = props.image.ID;
         <div class="card-image">
           <figure class="image is-1by1">
             <img
-                :src="`${API_URL}/api/${id}/image.png`"
+                :src="`${API_URL}/api/${id}/in.png`"
+                alt="Placeholder image"
+            />
+            <img
+                class="behind"
+                :src="`${API_URL}/api/${id}/out.png`"
                 alt="Placeholder image"
             />
           </figure>
@@ -35,5 +40,18 @@ let id = props.image.ID;
 
 .card {
   max-width: 250px;
+}
+
+.behind {
+  position: absolute;
+  z-index: 1;
+  transition: opacity 0.3s;
+  opacity: 0;
+}
+.card:hover {
+  .behind {
+    opacity: 1;
+    transition: opacity 0.3s;
+  }
 }
 </style>
