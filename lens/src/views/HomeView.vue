@@ -7,13 +7,35 @@ import {API_URL, userID} from "@/main";
 const uploadButton = ref<HTMLInputElement | null>(null);
 const router = useRouter();
 
+/**
+ * Show the error message that the Response, res, has.
+ * @param res the body will be consumed on this Response.
+ */
+async function showErrorMessage(res: Response): Promise<void> {
+  let alertString = "Der er sket en fejl! Prøv igen senere.";
+  let errorMsg = await res.text();
+  if (errorMsg.length > 0) alertString += ` Se fejlbeskeden: ${errorMsg}`;
+  alert(alertString);
+}
+
+/**
+ * goToRouteGiven expects a Response, res, that has the id to navigate to as body text.
+ * @param res will consume the body of this response.
+ */
+async function goToRouteGivenIn(res: Response): Promise<void> {
+  let id = await res.text();
+  localStorage.setItem("userID", id);
+  userID.value = id;
+  await router.push(`/user/${id}`);
+}
+
+/**
+ * Uploads the image in the uploadButton.value. Checks if there is any file before trying. Shows an error message,
+ * if the server sends an error back. It will automatically navigate to the ID returned.
+ */
 async function uploadImage() {
-  if (!uploadButton.value) {
-    return;
-  }
-  if (!uploadButton.value.files) {
-    return;
-  }
+  if (!uploadButton.value) return;
+  if (!uploadButton.value.files) return;
   if (uploadButton.value?.files.length == 0) {
     alert("Ingen filer er valgt.");
     return;
@@ -28,16 +50,10 @@ async function uploadImage() {
     headers: headers,
   });
   if (!res.ok) {
-    let alertString = "Der er sket en fejl! Prøv igen senere.";
-    let errorMsg = await res.text();
-    if (errorMsg.length > 0) alertString += ` Se fejlbeskeden: ${errorMsg}`;
-    alert(alertString);
+    await showErrorMessage(res);
     return;
   }
-  let id = await res.text();
-  localStorage.setItem("userID", id);
-  userID.value = id;
-  await router.push(`/user/${id}`);
+  await goToRouteGivenIn(res);
 }
 </script>
 
