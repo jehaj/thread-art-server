@@ -3,7 +3,7 @@ import {RouterLink} from "vue-router";
 import {API_URL} from "@/main";
 import type {Image} from "@/models";
 
-let props = defineProps<{image: Image}>();
+let props = defineProps<{ image: Image }>();
 let id = props.image.ID;
 </script>
 
@@ -18,14 +18,17 @@ let id = props.image.ID;
                 alt="Placeholder image"
             />
             <img
+                v-if="props.image.Finished"
                 class="behind"
                 :src="`${API_URL}/api/${id}/out.png`"
                 alt="Placeholder image"
             />
           </figure>
         </div>
-        <div class="card-footer">
-          <a class="card-footer-item">Gå til</a>
+        <div class="card-footer"
+             :class="{'has-background-link-light': props.image.Finished, 'has-background-warning-light': !props.image.Finished}">
+          <a class="card-footer-item is-primary" v-if="props.image.Finished">Gå til</a>
+          <a class="card-footer-item " v-else>Kom igen senere</a>
         </div>
       </div>
     </RouterLink>
@@ -48,6 +51,7 @@ let id = props.image.ID;
   transition: opacity 0.3s;
   opacity: 0;
 }
+
 .card:hover {
   .behind {
     opacity: 1;

@@ -48,13 +48,13 @@ func (h *Handler) UploadImage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// get user ID
-	userIDCookie, err := r.Cookie("userID")
+	authHeader := r.Header.Get("Authorization")
 	var userID string
 	userAlreadyExists := false
-	if err != nil {
+	if len(authHeader) < 4 {
 		userID = getRandomUserID()
 	} else {
-		userID = userIDCookie.Value
+		userID = strings.Split(authHeader, " ")[1]
 		if !h.s.ValidUserId(userID) {
 			w.WriteHeader(http.StatusBadRequest)
 			_, _ = w.Write([]byte("UserID is not valid"))

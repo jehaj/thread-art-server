@@ -10,7 +10,7 @@ type Service struct {
 	jobs chan string
 }
 
-func (s *Service) initialize() {
+func (s *Service) initialize(jobs chan string) {
 	err := s.DB.AutoMigrate(&User{})
 	if err != nil {
 		log.Println(err.Error())
@@ -19,6 +19,7 @@ func (s *Service) initialize() {
 	if err != nil {
 		log.Println(err.Error())
 	}
+	s.jobs = jobs
 }
 
 func (s *Service) AddUserWithImage(user *User) error {
@@ -53,4 +54,11 @@ func (s *Service) GetUser(userID string) (User, error) {
 		return User{}, err
 	}
 	return user, nil
+}
+
+func (s *Service) ImageFinished(imageID string) {
+	var image Image
+	s.DB.First(&image, Image{ID: imageID})
+	image.Finished = true
+	s.DB.Save(&image)
 }

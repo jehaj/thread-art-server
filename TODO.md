@@ -20,8 +20,8 @@ The backend / API. Written in go.
 
 ## view
 What you see and can click on to interact with the project. It uses the API. It uses bulma, vuejs and typescript.
-- [ ] homepage
-  - [ ] user id (fill automatically if in cookie)
+- [x] homepage
+  - [x] user id (fill automatically if in localStorage)
   - [x] upload field
   - [x] description
 - [x] personal page

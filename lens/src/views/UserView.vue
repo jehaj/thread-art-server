@@ -22,8 +22,9 @@ loadImages(route.params.id as string);
 <template>
   <section class="section">
     <div class="container">
-      <h1>Hej! Dit bruger ID er <span class="has-text-danger has-text-weight-bold">{{ $route.params.id }}</span>.</h1>
-      <div class="grid mt-3">
+      <h1 class="is-size-1">Hej!</h1>
+      <p class="is-size-4">Dit bruger ID er <span class="has-text-danger has-text-weight-bold">{{ $route.params.id }}</span>.</p>
+      <div class="grid mt-4">
         <ImageBox v-for="image in images" :key="image.ID" :image="image"/>
       </div>
     </div>

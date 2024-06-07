@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import {RouterLink, RouterView} from "vue-router";
+import {userID} from "@/main";
 
-let userID = "18-silver-rabbit";
+userID.value = localStorage.getItem("userID") || "";
 </script>
 
 <template>

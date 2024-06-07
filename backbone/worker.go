@@ -7,20 +7,21 @@ import (
 	"strings"
 )
 
-func worker(jobs <-chan string) {
+func worker(s *Service, jobs <-chan string) {
 	for id := range jobs {
 		log.Println("Working on image with ID", strings.Split(id, "-")[0])
 		cmd := exec.Command("./thread-art-rust.exe", filepath.Join(
 			args.DataPath, id, "in.png"),
 			filepath.Join(args.DataPath, id, "out.png"))
 		_ = cmd.Run()
+		s.ImageFinished(id)
 	}
 }
 
-func workerPool() chan string {
+func workerPool(s *Service) chan string {
 	jobs := make(chan string, 100)
 	for w := 1; w <= 3; w++ {
-		go worker(jobs)
+		go worker(s, jobs)
 	}
 	return jobs
 }

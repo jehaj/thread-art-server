@@ -2,7 +2,7 @@
 import AnimatedImage from "@/components/AnimatedImage.vue";
 import {ref} from "vue";
 import {useRouter} from "vue-router";
-import {API_URL} from "@/main";
+import {API_URL, userID} from "@/main";
 
 const uploadButton = ref<HTMLInputElement | null>(null);
 const router = useRouter();
@@ -20,8 +20,13 @@ async function uploadImage() {
   }
   let file = uploadButton.value.files[0];
   let formData = new FormData();
+  let headers = userID.value ? {"Authorization": `Basic ${userID.value}`} : new Headers();
   formData.set("image", file);
-  let res = await fetch(API_URL + "/api/upload", {method: "POST", body: formData});
+  let res = await fetch(API_URL + "/api/upload", {
+    method: "POST",
+    body: formData,
+    headers: headers,
+  });
   if (!res.ok) {
     let alertString = "Der er sket en fejl! Prøv igen senere.";
     let errorMsg = await res.text();
@@ -29,7 +34,9 @@ async function uploadImage() {
     alert(alertString);
     return;
   }
-  let id = await res.text()
+  let id = await res.text();
+  localStorage.setItem("userID", id);
+  userID.value = id;
   await router.push(`/user/${id}`);
 }
 </script>
