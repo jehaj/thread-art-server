@@ -3,8 +3,10 @@ This is to be used in combination with `thread-art-rust` or another software
 that makes (as is seen in art by Petros Vrellis) an image of threads by
 a user uploaded image. It contains multiple projects that work together as one.
 
-It is a rework of the work done at `thread-art-archive`. A lot of work was 
-done and can be found there - including the algorithm in different languages.
+It is a rework of the work done at 
+[`thread-art-archive`](https://github.com/jehaj/thread-art-archive). 
+A lot of work was  done and can be found there - including the algorithm in 
+different languages.
 
 Try visiting and using it at [art.jehaj.dk](https://art.jehaj.dk).
 
