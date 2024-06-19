@@ -19,6 +19,7 @@ import (
 type Handler struct {
 	s          *Service
 	imageSaver ImageSaver
+	demoUserID string
 }
 
 const MaxFileSize int64 = 1024 * 1024 * 5
@@ -45,7 +46,7 @@ func (h *Handler) GetIndex(w http.ResponseWriter, _ *http.Request) {
 
 // UploadImage is a handler function that expects an image File in a multipart form with the name "image". If there is
 // no Authorization a new ID will be generated and sent back. If this is in the next request the new image will be saved
-// to the same user.
+// to the same user. InitializeLists should have been called before calling this.
 func (h *Handler) UploadImage(w http.ResponseWriter, r *http.Request) {
 	err, imageReader := getImageFromRequest(w, r)
 	if err != nil {
@@ -67,6 +68,10 @@ func (h *Handler) UploadImage(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		userAlreadyExists = true
+		if userID == h.demoUserID {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
 	}
 	// get ID for the new image
 	imageID := uuid.New().String()
@@ -139,9 +144,7 @@ func (h *Handler) GetPoints(w http.ResponseWriter, r *http.Request) {
 		p[i] = atoi
 	}
 	pointsStruct := points{n, p}
-	log.Println(pointsStruct)
 	pointsString, err := json.Marshal(pointsStruct)
-	log.Println(pointsString)
 	w.Header().Set("Content-Type", "application/json")
 	_, _ = w.Write(pointsString)
 }

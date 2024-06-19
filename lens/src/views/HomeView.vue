@@ -2,7 +2,7 @@
 import AnimatedImage from "@/components/AnimatedImage.vue";
 import {ref} from "vue";
 import {useRouter} from "vue-router";
-import {API_URL, userID} from "@/main";
+import {API_URL, DEMO_USER_ID, userID} from "@/main";
 
 const uploadButton = ref<HTMLInputElement | null>(null);
 const router = useRouter();
@@ -55,6 +55,25 @@ async function uploadImage() {
   }
   await goToRouteGivenIn(res);
 }
+
+let pointIndices: number[];
+let numberOfPoints: number;
+
+let pointsFetched = ref(false);
+
+async function getPoints() {
+  let userResponse = await fetch(`${API_URL}/api/user/${DEMO_USER_ID}`);
+  let user = await userResponse.json();
+  console.log(user);
+  let imageID = user.Images[0].ID;
+  let pointsResponse = await fetch(`${API_URL}/api/${imageID}/points`);
+  let pointsJson = await pointsResponse.json();
+  pointIndices = pointsJson.PointIndex;
+  numberOfPoints = pointsJson.NumberOfPoints;
+  pointsFetched.value = true;
+}
+
+getPoints();
 </script>
 
 <template>
@@ -63,15 +82,17 @@ async function uploadImage() {
       <div class="container">
         <div class="hero-body">
           <div class="columns">
-            <div class="column">
+            <div class="column is-half">
               <p class="title">Prøv tråd kunst</p>
               <p class="subtitle mb-2">Simpelt & gratis</p>
               <p>Du kan nemt afprøve hvordan et billede vil se ud lavet i tråde. Hvis det er noget, som du kan lide, så
                 kan
                 du prøve at lave det selv i virkeligheden</p>
+              <a v-if="DEMO_USER_ID != 'undefined'" :href="`/user/${DEMO_USER_ID}`"
+                 class="button is-link mt-4 is-fullwidth">Se et eksempel</a>
             </div>
-            <div class="column is-justify-content-center is-flex">
-              <AnimatedImage/>
+            <div class="column is-half is-justify-content-center is-flex">
+              <AnimatedImage v-if="pointsFetched" :numberOfPoints="numberOfPoints" :pointIndices="pointIndices"/>
             </div>
           </div>
         </div>
@@ -105,3 +126,9 @@ async function uploadImage() {
     </section>
   </main>
 </template>
+
+<style scoped>
+canvas {
+  max-width: 300px;
+}
+</style>

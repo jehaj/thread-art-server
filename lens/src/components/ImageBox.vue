@@ -8,31 +8,29 @@ let id = props.image.ID;
 </script>
 
 <template>
-  <div class="cell">
-    <RouterLink :to="`/image/${id}`">
-      <div class="card">
-        <div class="card-image">
-          <figure class="image is-1by1">
-            <img
-                :src="`${API_URL}/api/${id}/in.png`"
-                alt="Placeholder image"
-            />
-            <img
-                v-if="props.image.Finished"
-                class="behind"
-                :src="`${API_URL}/api/${id}/out.png`"
-                alt="Placeholder image"
-            />
-          </figure>
-        </div>
-        <div class="card-footer"
-             :class="{'has-background-link-light': props.image.Finished, 'has-background-warning-light': !props.image.Finished}">
-          <a class="card-footer-item is-primary" v-if="props.image.Finished">Gå til</a>
-          <a class="card-footer-item " v-else>Kom igen senere</a>
-        </div>
+  <RouterLink class="cell" :to="`/image/${id}`">
+    <div class="card">
+      <div class="card-image">
+        <figure class="image is-1by1">
+          <img
+              :src="`${API_URL}/api/${id}/in.png`"
+              alt="Placeholder image"
+          />
+          <img
+              v-if="props.image.Finished"
+              class="behind"
+              :src="`${API_URL}/api/${id}/out.png`"
+              alt="Placeholder image"
+          />
+        </figure>
       </div>
-    </RouterLink>
-  </div>
+      <div class="card-footer"
+           :class="{'has-background-link-light': props.image.Finished, 'has-background-warning-light': !props.image.Finished}">
+        <a class="card-footer-item is-primary" v-if="props.image.Finished">Gå til</a>
+        <a class="card-footer-item " v-else>Kom igen senere</a>
+      </div>
+    </div>
+  </RouterLink>
 </template>
 
 <style scoped>
@@ -41,7 +39,7 @@ let id = props.image.ID;
   max-height: 250px;
 }
 
-.card {
+.card, .cell {
   max-width: 250px;
 }
 

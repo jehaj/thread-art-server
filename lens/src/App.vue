@@ -3,6 +3,7 @@ import {RouterLink, RouterView} from "vue-router";
 import {userID} from "@/main";
 
 userID.value = localStorage.getItem("userID") || "";
+
 </script>
 
 <template>
