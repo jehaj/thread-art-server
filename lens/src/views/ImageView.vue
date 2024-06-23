@@ -55,10 +55,51 @@ getPoints();
       </div>
     </div>
   </section>
+  <div id="carousel">
+    <div v-for="(point, index) in pointIndices"><h3>{{ point }}</h3>
+      <p>{{ index }}</p></div>
+  </div>
 </template>
 
-<style>
+<style scoped>
 .column.is-one-third {
   max-width: 350px;
+}
+
+#carousel {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  flex-direction: row;
+  gap: 20px;
+}
+
+#carousel div {
+  background-color: #ebc8bb;
+  scroll-snap-align: center;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  min-width: 14rem;
+  width: 14rem;
+  height: 14rem;
+  align-items: center;
+  justify-content: center;
+}
+
+#carousel h3, #carousel p {
+  margin: 0;
+  line-height: 1em;
+
+}
+
+#carousel h3 {
+  font-size: 5rem;
+}
+
+#carousel p {
+  font-size: 3rem;
+  color: darkslategray;
 }
 </style>
