@@ -33,6 +33,7 @@ loadImages(route.params.id as string);
       <div class="grid mt-4">
         <ImageBox v-for="image in images" :key="image.ID" :image="image"/>
       </div>
+      <p>Tilføj billeder ved at gå til forsiden: vælg et billede og tryk upload.</p>
     </div>
   </section>
 

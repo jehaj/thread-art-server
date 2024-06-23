@@ -1,5 +1,5 @@
 # TODO
-What is missing? Some things...
+What is missing? Few things...
 
 ## backbone
 The backend / API. Written in go.
@@ -31,9 +31,9 @@ uses bulma, vuejs and typescript.
 - [ ] image page
   - [x] thumbnail
   - [x] thread-art-animation (with canvas)
-  - [ ] download .txt file / image
-    - [ ] points.txt has the points
-  - [ ] download image
+  - [x] download .txt file / image
+    - [x] points.txt has the points
+  - [x] download image
   - [ ] scrollwheel with points
 
 Der skal være en eksempel bruger (demo), så man ikke selv behøver uploade et
@@ -47,4 +47,6 @@ understøtte, at demo-brugeren kan være der og ikke være der.
 DEMO_USER_ID != "", så findes der en demo-bruger. Eller også skal det være et 
 argument til kørsel-filen. At det er en miljøvariabel gør at f.eks. det kun skal
 skrives et sted og begge kan så bruge det (i f.eks. Dockerfile). I WebStorm og
-GoLand skal det skrives begge steder.
+GoLand skal det skrives begge steder. Desværre kræver Vite (på grund af 
+sikkerhed), at man som præfiks har VITE_ for at det sendes videre til 
+applikationen. Så man skal alligevel skrive det begge steder :-)

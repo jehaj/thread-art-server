@@ -13,7 +13,8 @@ import (
 func worker(s *Service, jobs <-chan string) {
 	for id := range jobs {
 		log.Println("Working on image with ID", strings.Split(id, "-")[0])
-		cmd := exec.Command("./thread-art-rust.exe", filepath.Join(
+		// todo make file ending dependant on which OS (.exe is added on windows)
+		cmd := exec.Command("./thread-art-rust", filepath.Join(
 			args.DataPath, id, "in.png"),
 			filepath.Join(args.DataPath, id, "out.png"))
 		_ = cmd.Run()
