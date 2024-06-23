@@ -1,0 +1,15 @@
+meta {
+  name: upload image
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/upload
+  body: multipartForm
+  auth: none
+}
+
+body:multipart-form {
+  image: @file(C:\Users\nikol\Sync\Billeder\Profilbilleder\Profilbillede - plante.jpg)
+}

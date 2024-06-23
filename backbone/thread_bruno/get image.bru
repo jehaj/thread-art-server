@@ -1,0 +1,15 @@
+meta {
+  name: get image
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/api/3dae83f1-6f84-4e0f-9dd2-d5b1c160a407/image.png
+  body: none
+  auth: none
+}
+
+body:multipart-form {
+  image: @file(C:\Users\nikol\Sync\Billeder\Profilbilleder\Profilbillede - plante.jpg)
+}

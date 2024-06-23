@@ -1,0 +1,19 @@
+meta {
+  name: upload image (set id)
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/upload
+  body: multipartForm
+  auth: none
+}
+
+headers {
+  Cookie: userID=18-silver-rabbit;
+}
+
+body:multipart-form {
+  image: @file(C:\Users\nikol\Sync\Billeder\Profilbilleder\Profilbillede - plante.jpg)
+}

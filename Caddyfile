@@ -1,9 +1,0 @@
-:80
-
-handle_path /api/* {
-    reverse_proxy {
-        to localhost:8001
-    }
-}
-
-file_server
