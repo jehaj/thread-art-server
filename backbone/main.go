@@ -70,7 +70,7 @@ func main() {
 
 	checkDemoUser(demoUserID, &s, imageSaver)
 
-	_ = http.ListenAndServe("localhost:8080", r)
+	_ = http.ListenAndServe(":8080", r)
 }
 
 // FileServer conveniently sets up a http.FileServer handler to serve

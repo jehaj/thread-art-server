@@ -59,7 +59,6 @@ onMounted(() => {
   ctx.clearRect(0, 0, 350, 350);
 
   function draw(timestamp: number): void {
-    console.log(pointer);
     if (lastTimestamp === 0) {
       lastTimestamp = timestamp;
     }
