@@ -40,8 +40,8 @@ func InitializeLists() {
 }
 
 // GetIndex returns the index file index.html.
-func (h *Handler) GetIndex(w http.ResponseWriter, _ *http.Request) {
-	_, _ = w.Write([]byte("Hello World"))
+func (h *Handler) GetIndex(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "dist/index.html")
 }
 
 // UploadImage is a handler function that expects an image File in a multipart form with the name "image". If there is

@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 // args is the struct that defines the arguments you can give to the binary to change the behavior.
@@ -54,6 +55,9 @@ func main() {
 	InitializeLists()
 
 	r.Get("/", h.GetIndex)
+	r.Get("/favicon.svg",
+		func(w http.ResponseWriter, r *http.Request) { http.ServeFile(w, r, "dist/favicon.svg") })
+	r.Handle("/assets/*", http.FileServer(http.Dir("dist/")))
 	r.Post("/api/upload", h.UploadImage)
 	r.Get("/api/user/{id}", h.GetUser)
 	r.Route("/api/{id}", func(r chi.Router) {
@@ -66,7 +70,28 @@ func main() {
 
 	checkDemoUser(demoUserID, &s, imageSaver)
 
-	_ = http.ListenAndServe("localhost:8080", r)
+	_ = http.ListenAndServe(":8080", r)
+}
+
+// FileServer conveniently sets up a http.FileServer handler to serve
+// static files from a http.FileSystem.
+func FileServer(r chi.Router, path string, root http.FileSystem) {
+	if strings.ContainsAny(path, "{}*") {
+		panic("FileServer does not permit any URL parameters.")
+	}
+
+	if path != "/" && path[len(path)-1] != '/' {
+		r.Get(path, http.RedirectHandler(path+"/", 301).ServeHTTP)
+		path += "/"
+	}
+	path += "*"
+
+	r.Get(path, func(w http.ResponseWriter, r *http.Request) {
+		rctx := chi.RouteContext(r.Context())
+		pathPrefix := strings.TrimSuffix(rctx.RoutePattern(), "/*")
+		fs := http.StripPrefix(pathPrefix, http.FileServer(root))
+		fs.ServeHTTP(w, r)
+	})
 }
 
 func checkDemoUser(id string, service *Service, saver ImageSaver) {
